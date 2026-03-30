@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TabAI — .env Setup Guide</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a1a; line-height: 1.6; padding: 40px; max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  h1 span { color: #FF3C00; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; border-bottom: 2px solid #FF3C00; padding-bottom: 16px; }
+  h2 { font-size: 20px; margin: 32px 0 4px; color: #FF3C00; }
+  h2 .num { background: #FF3C00; color: white; border-radius: 50%; display: inline-block; width: 28px; height: 28px; text-align: center; line-height: 28px; font-size: 14px; margin-right: 8px; }
+  h3 { font-size: 15px; margin: 16px 0 4px; color: #333; }
+  p, li { font-size: 13px; margin-bottom: 6px; }
+  ol, ul { padding-left: 24px; }
+  ol li { margin-bottom: 8px; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-family: 'SF Mono', 'Fira Code', monospace; }
+  pre { background: #1a1a1a; color: #e0e0e0; padding: 16px; border-radius: 8px; font-size: 12px; overflow-x: auto; margin: 8px 0 16px; font-family: 'SF Mono', 'Fira Code', monospace; line-height: 1.5; }
+  pre .comment { color: #6a9955; }
+  pre .value { color: #ce9178; }
+  pre .key { color: #9cdcfe; }
+  .env-line { display: flex; gap: 8px; margin: 4px 0; font-size: 12px; font-family: monospace; }
+  .env-line .k { color: #264f78; font-weight: bold; min-width: 220px; }
+  .env-line .v { color: #666; }
+  .box { background: #FFF7ED; border: 1px solid #FFCCA0; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13px; }
+  .box-blue { background: #EFF6FF; border: 1px solid #93C5FD; }
+  .box-green { background: #F0FDF4; border: 1px solid #86EFAC; }
+  .box strong { display: block; margin-bottom: 4px; }
+  .screenshot { background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 12px; text-align: center; color: #999; font-size: 12px; margin: 8px 0; font-style: italic; }
+  .time { display: inline-block; background: #e0e0e0; color: #333; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #eee; margin: 24px 0; }
+  .final-env { page-break-before: always; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  table th { background: #f4f4f4; text-align: left; padding: 6px 8px; border: 1px solid #ddd; }
+  table td { padding: 6px 8px; border: 1px solid #ddd; }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1><span>TabAI</span> — Complete .env Setup Guide</h1>
+<p class="subtitle">Step-by-step: from zero accounts to a working backend. Total time: ~20 minutes.</p>
+
+<!-- ============================================================ -->
+<h2><span class="num">1</span> Supabase (PostgreSQL Database)</h2>
+<p><span class="time">~5 min</span> — Free tier: 2 projects, 500 MB database, unlimited API requests</p>
+
+<h3>Step 1.1 — Create account</h3>
+<ol>
+  <li>Go to <code>https://supabase.com</code></li>
+  <li>Click <strong>"Start your project"</strong></li>
+  <li>Sign up with <strong>GitHub</strong> (fastest) or email</li>
+  <li>Verify your email if prompted</li>
+</ol>
+
+<h3>Step 1.2 — Create a new project</h3>
+<ol>
+  <li>Click <strong>"New Project"</strong></li>
+  <li>Choose your organization (auto-created on signup)</li>
+  <li>Fill in:
+    <ul>
+      <li><strong>Project name:</strong> <code>tabai</code></li>
+      <li><strong>Database password:</strong> click <strong>"Generate a password"</strong> — <em>COPY THIS PASSWORD NOW, you won't see it again!</em></li>
+      <li><strong>Region:</strong> pick the closest to you (e.g. <code>eu-central-1</code> for Europe)</li>
+      <li><strong>Plan:</strong> Free</li>
+    </ul>
+  </li>
+  <li>Click <strong>"Create new project"</strong></li>
+  <li>Wait ~2 minutes for provisioning</li>
+</ol>
+
+<div class="box">
+  <strong>⚠️ Save the database password!</strong>
+  Write it down immediately. If you lose it, go to Settings → Database → Reset database password.
+</div>
+
+<h3>Step 1.3 — Get your credentials</h3>
+
+<p><strong>API keys</strong> — go to <strong>Settings → API</strong> (left sidebar):</p>
+<table>
+  <tr><th>What to copy</th><th>Goes into .env as</th></tr>
+  <tr><td><strong>Project URL</strong> — looks like <code>https://abcxyz123.supabase.co</code></td><td><code>SUPABASE_URL</code></td></tr>
+  <tr><td><strong>anon / public</strong> key — starts with <code>eyJ...</code></td><td><code>SUPABASE_ANON_KEY</code></td></tr>
+  <tr><td><strong>service_role / secret</strong> key — starts with <code>eyJ...</code></td><td><code>SUPABASE_SERVICE_KEY</code></td></tr>
+</table>
+
+<p><strong>Database URL</strong> — go to <strong>Settings → Database</strong>:</p>
+<ol>
+  <li>Scroll to <strong>"Connection string"</strong> section</li>
+  <li>Select the <strong>"URI"</strong> tab</li>
+  <li>Copy it — looks like: <code>postgresql://postgres:[YOUR-PASSWORD]@db.abcxyz123.supabase.co:5432/postgres</code></li>
+  <li><strong>IMPORTANT:</strong> Change the prefix from <code>postgresql://</code> to <code>postgresql+asyncpg://</code></li>
+</ol>
+
+<div class="box box-blue">
+  <strong>📝 Your .env values so far:</strong>
+<pre style="background:#1e293b; margin:4px 0 0;">
+<span class="key">DATABASE_URL</span>=<span class="value">postgresql+asyncpg://postgres:YOUR_PASSWORD@db.YOUR_REF.supabase.co:5432/postgres</span>
+<span class="key">SUPABASE_URL</span>=<span class="value">https://YOUR_REF.supabase.co</span>
+<span class="key">SUPABASE_ANON_KEY</span>=<span class="value">eyJ...</span>
+<span class="key">SUPABASE_SERVICE_KEY</span>=<span class="value">eyJ...</span></pre>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2><span class="num">2</span> Cloudflare R2 (Audio File Storage)</h2>
+<p><span class="time">~8 min</span> — Free tier: 10 GB storage, 10 million reads/month, zero egress fees</p>
+
+<h3>Step 2.1 — Create Cloudflare account</h3>
+<ol>
+  <li>Go to <code>https://dash.cloudflare.com/sign-up</code></li>
+  <li>Sign up with email + password</li>
+  <li>Verify your email</li>
+  <li>You do NOT need to add a domain or website — skip any onboarding prompts</li>
+</ol>
+
+<h3>Step 2.2 — Enable R2 and create bucket</h3>
+<ol>
+  <li>In the left sidebar, click <strong>"R2 Object Storage"</strong></li>
+  <li>You may need to enter payment details (credit card) — <strong>you won't be charged</strong> on the free tier, but Cloudflare requires a card on file for R2</li>
+  <li>Click <strong>"Create bucket"</strong></li>
+  <li>Name: <code>tabai-audio</code></li>
+  <li>Location: <strong>Automatic</strong> (or pick your region)</li>
+  <li>Click <strong>"Create bucket"</strong></li>
+</ol>
+
+<h3>Step 2.3 — Get your Account ID</h3>
+<ol>
+  <li>Look at the URL in your browser — it looks like: <code>https://dash.cloudflare.com/<strong>abc123def456</strong>/r2</code></li>
+  <li>That bold part is your <strong>Account ID</strong></li>
+  <li>Or: go to any R2 page → right sidebar shows <strong>"Account ID"</strong></li>
+</ol>
+
+<h3>Step 2.4 — Create an R2 API token</h3>
+<ol>
+  <li>Go to <strong>R2 Overview</strong> page</li>
+  <li>Click <strong>"Manage R2 API Tokens"</strong> (top right area)</li>
+  <li>Click <strong>"Create API token"</strong></li>
+  <li>Configure:
+    <ul>
+      <li><strong>Token name:</strong> <code>tabai-backend</code></li>
+      <li><strong>Permissions:</strong> <code>Object Read &amp; Write</code></li>
+      <li><strong>Specify bucket(s):</strong> select <code>tabai-audio</code></li>
+      <li><strong>TTL:</strong> leave default or set to never expire</li>
+    </ul>
+  </li>
+  <li>Click <strong>"Create API Token"</strong></li>
+  <li><strong>COPY BOTH VALUES IMMEDIATELY</strong> — they are shown only once:
+    <ul>
+      <li><strong>Access Key ID</strong> — looks like a short string</li>
+      <li><strong>Secret Access Key</strong> — longer string</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="box">
+  <strong>⚠️ Copy the secret immediately!</strong>
+  Cloudflare shows the Secret Access Key only once. If you lose it, delete the token and create a new one.
+</div>
+
+<div class="box box-blue">
+  <strong>📝 Your .env values so far:</strong>
+<pre style="background:#1e293b; margin:4px 0 0;">
+<span class="key">R2_ACCOUNT_ID</span>=<span class="value">your-32-char-account-id</span>
+<span class="key">R2_ACCESS_KEY_ID</span>=<span class="value">your-access-key</span>
+<span class="key">R2_SECRET_ACCESS_KEY</span>=<span class="value">your-secret-key</span>
+<span class="key">R2_BUCKET_NAME</span>=<span class="value">tabai-audio</span></pre>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<div class="page-break"></div>
+
+<h2><span class="num">3</span> Modal (GPU Serverless Workers)</h2>
+<p><span class="time">~5 min</span> — Free tier: $30/month credits (enough for ~100 transcriptions)</p>
+
+<h3>Step 3.1 — Create Modal account</h3>
+<ol>
+  <li>Go to <code>https://modal.com</code></li>
+  <li>Click <strong>"Sign up"</strong></li>
+  <li>Sign in with <strong>GitHub</strong> (required — Modal uses GitHub auth)</li>
+  <li>You'll be dropped into the Modal dashboard</li>
+</ol>
+
+<h3>Step 3.2 — Authenticate CLI</h3>
+<p>In your terminal (with the backend venv activated):</p>
+<pre>
+cd backend
+source venv/bin/activate
+modal setup
+</pre>
+<ol>
+  <li>This opens your browser</li>
+  <li>Click <strong>"Approve"</strong> to link your terminal to Modal</li>
+  <li>You'll see: <code>✓ Authentication successful</code></li>
+</ol>
+
+<h3>Step 3.3 — Create a Modal secret</h3>
+<p>The GPU worker needs access to your database and R2. Create a secret bundle:</p>
+<pre>
+modal secret create tabai-secrets \
+  DATABASE_URL="postgresql+asyncpg://postgres:PASS@db.REF.supabase.co:5432/postgres" \
+  R2_ACCOUNT_ID="your-account-id" \
+  R2_ACCESS_KEY_ID="your-access-key" \
+  R2_SECRET_ACCESS_KEY="your-secret-key" \
+  R2_BUCKET_NAME="tabai-audio"
+</pre>
+
+<div class="box box-green">
+  <strong>✅ Use the SAME values</strong> you already put in your .env file for DATABASE_URL, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY.
+</div>
+
+<p>Verify it was created:</p>
+<pre>modal secret list</pre>
+<p>You should see <code>tabai-secrets</code> in the list.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2><span class="num">4</span> Generate SECRET_KEY</h2>
+<p><span class="time">~10 sec</span></p>
+
+<p>Run this in your terminal:</p>
+<pre>openssl rand -hex 32</pre>
+<p>Copy the output (64-character hex string) and paste it as <code>SECRET_KEY</code> in your .env.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2><span class="num">5</span> Optional: Redis &amp; Sentry</h2>
+
+<table>
+  <tr><th>Variable</th><th>What to do</th></tr>
+  <tr><td><code>REDIS_URL</code></td><td>Keep default <code>redis://localhost:6379</code>. Only needed if you run Docker Compose or install Redis locally. Not required for basic operation.</td></tr>
+  <tr><td><code>SENTRY_DSN</code></td><td>Leave empty. Optional error monitoring. Sign up at <code>sentry.io</code> if you want it later.</td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<div class="page-break"></div>
+
+<h2><span class="num">6</span> Final .env File</h2>
+<p>Your completed <code>backend/.env</code> should look like this:</p>
+
+<pre>
+<span class="comment"># === Database (Supabase) ===</span>
+<span class="key">DATABASE_URL</span>=<span class="value">postgresql+asyncpg://postgres:MyP4ssw0rd@db.abcxyz123.supabase.co:5432/postgres</span>
+<span class="key">SUPABASE_URL</span>=<span class="value">https://abcxyz123.supabase.co</span>
+<span class="key">SUPABASE_ANON_KEY</span>=<span class="value">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOi...</span>
+<span class="key">SUPABASE_SERVICE_KEY</span>=<span class="value">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOi...</span>
+
+<span class="comment"># === Storage (Cloudflare R2) ===</span>
+<span class="key">R2_ACCOUNT_ID</span>=<span class="value">a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4</span>
+<span class="key">R2_ACCESS_KEY_ID</span>=<span class="value">abcdef1234567890abcdef12</span>
+<span class="key">R2_SECRET_ACCESS_KEY</span>=<span class="value">abcdef1234567890abcdef1234567890abcdef12345678</span>
+<span class="key">R2_BUCKET_NAME</span>=<span class="value">tabai-audio</span>
+
+<span class="comment"># === App ===</span>
+<span class="key">REDIS_URL</span>=<span class="value">redis://localhost:6379</span>
+<span class="key">SECRET_KEY</span>=<span class="value">147d471d53857a37544d4a822b4c8fa71778ae9029f2531686575dbbec262f2c</span>
+<span class="key">ENVIRONMENT</span>=<span class="value">development</span>
+<span class="key">CORS_ORIGINS</span>=<span class="value">http://localhost:3000</span>
+<span class="key">SENTRY_DSN</span>=
+</pre>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2><span class="num">7</span> Verify Everything Works</h2>
+
+<h3>Terminal 1 — Start backend</h3>
+<pre>
+cd backend
+source venv/bin/activate
+uvicorn api.main:app --reload --port 8000
+</pre>
+<p>Expected: <code>Development mode: database tables created.</code> + <code>Uvicorn running on http://127.0.0.1:8000</code></p>
+
+<h3>Terminal 2 — Start frontend</h3>
+<pre>
+cd frontend
+npm run dev
+</pre>
+<p>Expected: <code>Ready in X.Xs</code> at <code>http://localhost:3000</code></p>
+
+<h3>Terminal 3 — Deploy Modal worker</h3>
+<pre>
+cd backend
+source venv/bin/activate
+modal serve workers/transcription.py
+</pre>
+<p>Expected: <code>Serving app "tabai-transcription"</code></p>
+
+<h3>Verify checklist</h3>
+<table>
+  <tr><th>Check</th><th>How</th><th>Expected</th></tr>
+  <tr><td>Health</td><td>Open <code>http://localhost:8000/health</code></td><td><code>{"status":"ok","version":"0.1.0"}</code></td></tr>
+  <tr><td>API docs</td><td>Open <code>http://localhost:8000/docs</code></td><td>Swagger UI with /api/jobs endpoints</td></tr>
+  <tr><td>Frontend</td><td>Open <code>http://localhost:3000</code></td><td>TabAI upload page with drop zone</td></tr>
+  <tr><td>Upload test</td><td>Drop a short MP3 file</td><td>Progress bar moves through all steps → tab displayed</td></tr>
+</table>
+
+<hr>
+
+<h2>Troubleshooting</h2>
+<table>
+  <tr><th>Problem</th><th>Fix</th></tr>
+  <tr><td><code>nodename nor servname provided</code></td><td>DATABASE_URL has wrong Supabase project ref — double check in Supabase dashboard</td></tr>
+  <tr><td><code>password authentication failed</code></td><td>Wrong DB password — reset it in Supabase Settings → Database</td></tr>
+  <tr><td><code>403 Forbidden</code> on R2 upload</td><td>R2 token doesn't have write permissions, or wrong bucket name</td></tr>
+  <tr><td><code>SignatureDoesNotMatch</code> on R2</td><td>R2_SECRET_ACCESS_KEY is wrong — create a new API token</td></tr>
+  <tr><td><code>Modal dispatch failed</code></td><td>Run <code>modal setup</code> again, or check <code>modal secret list</code> shows <code>tabai-secrets</code></td></tr>
+  <tr><td>Frontend shows 404</td><td>EMFILE error on macOS — run <code>ulimit -n 10240</code> before <code>npm run dev</code></td></tr>
+</table>
+
+</body>
+</html>
