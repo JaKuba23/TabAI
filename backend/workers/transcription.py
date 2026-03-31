@@ -280,7 +280,7 @@ def _separate_guitar(audio_path: str, guitar_path: str) -> None:
 # Step C  -- Basic Pitch transcription
 # ---------------------------------------------------------------------------
 
-def _transcribe_audio(guitar_path: str):
+def _transcribe_audio(guitar_path: str) -> tuple:
     from basic_pitch import ICASSP_2022_MODEL_PATH
     from basic_pitch.inference import predict
 
@@ -696,7 +696,10 @@ async def run_transcription_pipeline(
         # ------------------------------------------------------------------
         await _update_job_status(job_id, "generating", "Generating tablature...", 65)
 
-        tab_data = _midi_to_tab(note_events, tuning)
+        if not note_events:
+            tab_data = {"tuning": tuning, "open_notes": TUNINGS.get(tuning, TUNINGS["standard"]), "notes": []}
+        else:
+            tab_data = _midi_to_tab(note_events, tuning)
 
         # ------------------------------------------------------------------
         # Step F -- Smart Capo

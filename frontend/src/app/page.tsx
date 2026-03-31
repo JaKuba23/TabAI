@@ -2,8 +2,7 @@
 
 import { useCallback, useRef, useState } from "react"
 import dynamic from "next/dynamic"
-import type { Tuning, JobStatus, JobStatusResponse, JobResult } from "@/lib/types"
-import { TUNING_LABELS } from "@/lib/types"
+import type { Tuning, JobStatusResponse, JobResult } from "@/lib/types"
 import { uploadAudio, getJobResult, createJobStatusSocket, pollJobStatus } from "@/lib/api"
 import DropZone from "@/components/upload/DropZone"
 import TuningSelector from "@/components/upload/TuningSelector"
@@ -196,7 +195,7 @@ export default function HomePage() {
             <MetadataBar
               bpm={result.bpm}
               keyName={result.key}
-              tuning={TUNING_LABELS[result.tuning]}
+              tuning={result.tuning}
               capoSuggestion={result.capo_suggestion}
             />
 

@@ -4,14 +4,14 @@ import { TUNING_LABELS } from "@/lib/types"
 import type { Tuning } from "@/lib/types"
 
 interface Props {
-  bpm: number | null
-  keyName: string | null
-  tuning: string
-  capoSuggestion: number | null
+  readonly bpm: number | null
+  readonly keyName: string | null
+  readonly tuning: Tuning
+  readonly capoSuggestion: number | null
 }
 
 export default function MetadataBar({ bpm, keyName, tuning, capoSuggestion }: Props) {
-  const tuningLabel = TUNING_LABELS[tuning as Tuning] ?? tuning
+  const tuningLabel = TUNING_LABELS[tuning]
 
   return (
     <div className="flex flex-wrap items-center gap-3">

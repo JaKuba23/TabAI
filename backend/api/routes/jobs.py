@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.config import get_settings
 from api.database import get_session_factory, get_db
 from api.models import Job, JobStatus, Transcription
-from api.storage import get_presigned_download_url, upload_audio
+from api.storage import StorageError, get_presigned_download_url, upload_audio
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,14 @@ async def upload_audio_file(
     db.add(job)
     await db.flush()
 
-    r2_key = upload_audio(contents, filename, str(job_id))
+    try:
+        r2_key = upload_audio(contents, filename, str(job_id))
+    except StorageError as exc:
+        job.status = JobStatus.error
+        job.error_message = str(exc)
+        await db.flush()
+        raise HTTPException(status_code=503, detail="Storage service unavailable.") from exc
+
     job.audio_r2_key = r2_key
     job.status = JobStatus.pending
     job.step_message = "Queued for processing"
@@ -156,7 +163,14 @@ async def get_job_result(
         ("midi", transcription.midi_r2_key),
         ("musicxml", transcription.musicxml_r2_key),
     ]:
-        download_urls[fmt] = get_presigned_download_url(key) if key else None
+        if key:
+            try:
+                download_urls[fmt] = get_presigned_download_url(key)
+            except StorageError:
+                logger.warning("Failed to generate presigned URL for %s/%s", fmt, key)
+                download_urls[fmt] = None
+        else:
+            download_urls[fmt] = None
 
     return {
         "job_id": str(job.id),
